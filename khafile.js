@@ -1,0 +1,10 @@
+let project = new Project('OpenFL Test');
+project.addAssets('Assets/**');
+project.addSources('Sources');
+project.addLibrary('openfl');
+project.addLibrary('lime');
+project.addLibrary('format');
+project.addDefine('tools');
+project.addParameter('-main lime.system.KhaMain');
+project.addShaders('Libraries/openfl/src/openfl/_internal/renderer/kha/shaders/**');
+resolve(project);

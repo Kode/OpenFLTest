@@ -1,0 +1,16 @@
+[submodule "Kha"]
+	path = Kha
+	url = https://github.com/Kode/Kha.git
+	branch = master
+[submodule "Libraries/openfl"]
+	path = Libraries/openfl
+	url = https://github.com/openfl/openfl.git
+	branch = master
+[submodule "Libraries/lime"]
+	path = Libraries/lime
+	url = https://github.com/openfl/lime.git
+	branch = master
+[submodule "Libraries/format"]
+	path = Libraries/format
+	url = https://github.com/HaxeFoundation/format.git
+	branch = master
