@@ -4,11 +4,11 @@
 	branch = master
 [submodule "Libraries/openfl"]
 	path = Libraries/openfl
-	url = https://github.com/openfl/openfl.git
+	url = https://github.com/Kode/openfl.git
 	branch = master
 [submodule "Libraries/lime"]
 	path = Libraries/lime
-	url = https://github.com/openfl/lime.git
+	url = https://github.com/Kode/lime.git
 	branch = master
 [submodule "Libraries/format"]
 	path = Libraries/format
