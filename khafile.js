@@ -41,7 +41,7 @@ function createApplicationMain() {
 	fs.writeFileSync('build/Sources/ApplicationMain.hx', am, 'utf8');
 }
 
-function createManifestResources() {
+function createManifestResources(dir) {
 	let mr = fs.readFileSync('Libraries/lime/templates/haxe/ManifestResources.hx', 'utf8');
 	mr = mr.replace(/::if \(assets != null\)::/g, '/*');
 	mr = mr.replace(/::foreach/g, '/*');
@@ -50,27 +50,38 @@ function createManifestResources() {
 	mr = mr.replace(/::end::::end::/g, '*/');
 	mr = mr.replace(/::library::/g, 'default');
 
+	let assets = fs.readdirSync(dir);
+	let assetObjects = [];
+	for (let asset of assets) {
+		assetObjects.push(
+			{
+				id: dir.toLowerCase() + '/' + asset,
+				path: dir.toLowerCase() + '/' + asset,
+				preload: true,
+				size: 449,
+				type: "IMAGE"
+			}
+		);
+	}
+
 	mr = mr.replace(/::manifest::/g,
   'manifest = new lime.utils.AssetManifest();\n'
-+ 'manifest.assets = [\n'
-+ '{\n'
-+ 'id: "assets/wabbit_alpha.png",\n'
-+ 'path: "assets/wabbit_alpha.png",\n'
-+ 'preload: true,\n'
-+ 'size: 449,\n'
-+ 'type: "IMAGE"\n'
-+ '}\n'
-+ '];\n'
++ 'manifest.assets = '
++ JSON.stringify(assetObjects)
++ ';\n'
 + 'manifest.libraryArgs = [];\n'
 + 'manifest.libraryType = null;\n'
 + 'manifest.name = null;\n'
 + 'manifest.rootPath = "";\n'
 + 'manifest.version = 2;\n');
 
-	mr = mr.replace(/::images::/g,
-  '#if !macro\n'
-+ '@:image("../Assets/wabbit_alpha.png") #if display private #end class __ASSET__assets_wabbit_alpha_png extends lime.graphics.Image {}\n'
-+ '#end');
+	let imagesText = '#if !macro\n';
+	for (let asset of assets) {
+		imagesText += '@:image("../' + dir + '/' + asset + '") #if display private #end class __ASSET__' + dir.toLowerCase() + '_' + asset.replace(/\./g, '_') + ' extends lime.graphics.Image {}\n'
+	}
+	imagesText += '#end';
+
+	mr = mr.replace(/::images::/g, imagesText);
 
 	if (!fs.existsSync('build')) {
 		fs.mkdirSync('build');
@@ -81,14 +92,13 @@ function createManifestResources() {
 	fs.writeFileSync('build/Sources/ManifestResources.hx', mr, 'utf8');
 }
 
+createApplicationMain();
+createManifestResources('Assets');
+
 let project = new Project('OpenFL Test');
 project.addAssets('Assets/**');
-project.addSources('Sources');
-
-createApplicationMain();
-createManifestResources();
 project.addSources('build/Sources');
-
+project.addSources('Sources');
 project.addLibrary('openfl');
 project.addLibrary('lime');
 project.addLibrary('format');
