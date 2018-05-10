@@ -53,31 +53,35 @@ function createManifestResources(dir) {
 	let assets = fs.readdirSync(dir);
 	let assetObjects = [];
 	for (let asset of assets) {
-		assetObjects.push(
-			{
-				id: dir.toLowerCase() + '/' + asset,
-				path: dir.toLowerCase() + '/' + asset,
-				preload: true,
-				size: 449,
-				type: "IMAGE"
-			}
-		);
+		if (asset.endsWith('.png') || asset.endsWith('.jpg') || asset.endsWith('.jpeg')) {
+			assetObjects.push(
+				{
+					id: dir.toLowerCase() + '/' + asset,
+					path: dir.toLowerCase() + '/' + asset,
+					preload: true,
+					size: 449,
+					type: "IMAGE"
+				}
+			);
+		}
 	}
 
 	mr = mr.replace(/::manifest::/g,
   'manifest = new lime.utils.AssetManifest();\n'
-+ 'manifest.assets = '
++ '\t\tmanifest.assets = '
 + JSON.stringify(assetObjects)
 + ';\n'
-+ 'manifest.libraryArgs = [];\n'
-+ 'manifest.libraryType = null;\n'
-+ 'manifest.name = null;\n'
-+ 'manifest.rootPath = "";\n'
-+ 'manifest.version = 2;\n');
++ '\t\tmanifest.libraryArgs = [];\n'
++ '\t\tmanifest.libraryType = null;\n'
++ '\t\tmanifest.name = null;\n'
++ '\t\tmanifest.rootPath = "";\n'
++ '\t\tmanifest.version = 2;\n');
 
 	let imagesText = '#if !macro\n';
 	for (let asset of assets) {
-		imagesText += '@:image("../' + dir + '/' + asset + '") #if display private #end class __ASSET__' + dir.toLowerCase() + '_' + asset.replace(/\./g, '_') + ' extends lime.graphics.Image {}\n'
+		if (asset.endsWith('.png') || asset.endsWith('.jpg') || asset.endsWith('.jpeg')) {
+			imagesText += '@:image("../' + dir + '/' + asset + '") #if display private #end class __ASSET__' + dir.toLowerCase() + '_' + asset.replace(/\./g, '_').replace(/-/g, '_') + ' extends lime.graphics.Image {}\n'
+		}
 	}
 	imagesText += '#end';
 
